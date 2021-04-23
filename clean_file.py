@@ -6,7 +6,7 @@ import pandas as pd
 
 #Step 1: Load/read file
 
-raw_db = open('/Users/I.Mack/coding/mackina_group/piwi_data_mining/piwi_seqs.txt')
+raw_db = open('piwi_seqs.txt')
 dirty_db = raw_db.read()
 
 #Step 2: remove \t and \n
