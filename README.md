@@ -8,4 +8,4 @@
 #Specifically, this code was written using piwi-domain genetic sequence data to find trends.\
 #The primary soruce data is provided in file called piwi_seq.txt. \
 #
-#Written in python3 and [INSERT python packages used].
+#Written in python3.
