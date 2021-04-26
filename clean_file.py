@@ -52,7 +52,7 @@ df_head = pd.Series(head,dtype=int)
 df_tail = pd.Series(tail,dtype=int)
 df_head_tail = pd.concat([df_head, df_tail],axis=1)
 
-df_pir_loc = pd.concat([df_common_name, df_head_tail],axis = 1).reindex(df_head_tail.index)
+df_pir_loc = pd.concat([df_common_name, df_head_tail],axis = 1)#.reindex(df_head_tail.index)
 df_pir_loc.columns = ['name','start','end']
 
 # Step 4: section data using start points of rna_name, put into tuple where key is rna_name
@@ -92,9 +92,9 @@ for list in pir_data_grouped:
 doodle = []
 for list in pir_data_grouped:
     for list_2 in list:
-        find_sequence = re.findall('[ATGC]+', list_2)
+        find_sequence = re.findall('[NATGC]+', list_2)
         doodle.append(find_sequence)
-
+        
 #find_pub_id
 dandy = []
 for list in pir_data_grouped:
@@ -103,9 +103,58 @@ for list in pir_data_grouped:
         dandy.append(list_2[find_pub_id+1:].strip())
 
 #creates pir dictonary
-pir_key_value = dict(zip(common_name, zip(hanky,doodle,dandy)))
+#pir_key_value = dict(zip(common_name, zip(hanky,doodle,dandy)))
 
-#Creates df with name and sequence
-df_doodle = pd.Series(data=doodle)
-df_name_sequence = pd.concat([df_common_name, df_doodle],axis = 1).reindex(df_doodle.index)
-df_name_sequence.columns = ['name','sequence']
+data = pd.DataFrame({
+    'name':common_name,
+    'sequence':doodle
+    })
+
+data['sequence'] = data['sequence'].str[0]
+
+
+print('Dataframe created')
+
+#Exports df to csv
+data.to_csv('/home/gramps/coding/piwi_data_mining/piwi_seq_db.csv', index=False)
+
+
+
+
+'''
+#inserts df into mysql db
+import pymysql
+from sqlalchemy import create_engine
+
+
+USING to_sql
+engine = create_engine("mysql+pymysql://{user}:{pw}@localhost/{db}"
+                       .format(user=input('Enter username: '),
+                               pw=input('Enter password: '),
+                               db=input('Enter db name: ')))
+
+data.to_sql('name_seq', con = engine, if_exists = 'append',index=False)
+
+
+#USING pymysql
+connection = pymysql.connect(
+        host='localhost',
+        user=input('Enter username: '),
+        password=input('Enter password: '),
+        db=input('Enter db name: '))
+
+cursor = connection.cursor()
+
+# creating column list for insertion
+cols = "`,`".join([str(i) for i in data.columns.tolist()])
+
+# Insert DataFrame recrds one by one.
+for i,row in data.iterrows():
+    sql = "INSERT INTO `name_seq` (`" +cols + "`) VALUES (" + "%s,"*(len(row)-1) + "%s)"
+    cursor.execute(sql, tuple(row))
+
+    # the connection is not autocommitted by default, so we must commit to save our changes
+    connection.commit()
+
+print('df INSERT complete')
+'''
