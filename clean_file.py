@@ -116,7 +116,7 @@ data['sequence'] = data['sequence'].str[0]
 print('Dataframe created')
 
 #Exports df to csv
-data.to_csv('/home/gramps/coding/piwi_data_mining/piwi_seq_db.csv', index=False)
+data.to_csv('/Path/', index=False)
 
 
 
